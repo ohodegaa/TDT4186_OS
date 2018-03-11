@@ -1,4 +1,3 @@
-import java.text.MessageFormat;
 import java.util.LinkedList;
 
 
@@ -41,9 +40,8 @@ public class WaitingArea {
         waitingArea.add(customer);
 
 
-        String msg = "Thread {0}: customer \"{1}\" entered the waiting area";
-        Object[] args = {Thread.currentThread().getName(), customer.getCustomerID()};
-        printNice(msg, args);
+        String msg = Thread.currentThread().getName() + ": Customer " +customer.getCustomerID() + " is now entering";
+        SushiBar.write(msg);
 
         notify();
     }
@@ -65,9 +63,9 @@ public class WaitingArea {
             e.printStackTrace();
         }
         Customer customer = waitingArea.poll();
-        String msg = "Thread {0}: customer \"{1}\" left the waiting area";
-        Object[] args = {Thread.currentThread().getName(), customer.getCustomerID()};
-        printNice(msg, args);
+        String msg = Thread.currentThread().getName() + ": Customer " +customer.getCustomerID() + " is now leaving";
+        SushiBar.write(msg);
+
 
         notify();
         return customer;
@@ -81,10 +79,6 @@ public class WaitingArea {
         return waitingArea.size() == 0;
     }
 
-    private void printNice(String message, Object[] args) {
-        MessageFormat mf = new MessageFormat(message);
-        System.out.println(mf.format(args));
-    }
 
 
 }

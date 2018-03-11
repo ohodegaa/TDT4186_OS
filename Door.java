@@ -6,10 +6,14 @@ public class Door implements Runnable {
 
     /**
      * Creates a new Door. Make sure to save the
+     *
      * @param waitingArea   The customer queue waiting for a seat
      */
+
+    private WaitingArea waitingArea;
+
     public Door(WaitingArea waitingArea) {
-        // TODO Implement required functionality
+        this.waitingArea = waitingArea;
     }
 
     /**
@@ -18,8 +22,24 @@ public class Door implements Runnable {
      */
     @Override
     public void run() {
-        // TODO Implement required functionality
+        // TODO: add random production of customers
+
+        while (SushiBar.isOpen) {
+            Customer nextCustomer = new Customer();     // creates new customer
+            // logging
+            String msg = Thread.currentThread().getName() + ": Customer " + nextCustomer.getCustomerID() + " is now created";
+            SushiBar.write(msg);
+            waitingArea.enter(nextCustomer);            // new customer enters the waiting area
+            SushiBar.customerCounter.increment();       // add one to customer counter
+
+            try {
+                // wait an amount of time before creating a new customer
+                Thread.sleep(SushiBar.doorWait);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    // Add more methods as you see fit
+
 }
