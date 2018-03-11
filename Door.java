@@ -30,7 +30,7 @@ public class Door implements Runnable {
             String msg = Thread.currentThread().getName() + ": Customer " + nextCustomer.getCustomerID() + " is now created";
             SushiBar.write(msg);
             waitingArea.enter(nextCustomer);            // new customer enters the waiting area
-            SushiBar.customerCounter.increment();       // add one to customer counter
+
 
             try {
                 // wait an amount of time before creating a new customer
