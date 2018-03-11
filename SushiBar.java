@@ -11,7 +11,7 @@ public class SushiBar {
     private static int waitressCount = 10;
     private static int duration = 3;
     public static int maxOrder = 10;
-    public static int waitressWait = 50; // Used to calculat the time the waitress spends before taking the order
+    public static int waitressWait = 50; // Used to calculate the time the waitress spends before taking the order
     public static int customerWait = 3000; // Used to calculate the time the customer uses eating
     public static int doorWait = 100; // Used to calculate the interval at which the door tries to create a customer
     public static boolean isOpen = true;
