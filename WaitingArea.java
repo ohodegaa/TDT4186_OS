@@ -1,4 +1,3 @@
-import java.text.MessageFormat;
 import java.util.LinkedList;
 
 
@@ -29,23 +28,20 @@ public class WaitingArea {
      */
 
     // Produce. Should be used by the producer (door)
-    public synchronized void enter(Customer customer) {
-        try {
+    public synchronized void enter(Customer customer) throws InterruptedException {
+
+        while (full()) {
             // wait until there are room for another customer in the waiting area
-            while (full()) {
-                wait();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            this.wait();
         }
+
         waitingArea.add(customer);
 
+        // logging
+        String msg = Thread.currentThread().getName() + ": Customer " + customer.getCustomerID() + " is now waiting";
+        SushiBar.write(msg);
 
-        String msg = "Thread {0}: customer \"{1}\" entered the waiting area";
-        Object[] args = {Thread.currentThread().getName(), customer.getCustomerID()};
-        printNice(msg, args);
-
-        notify();
+        notifyAll();
     }
 
     /**
@@ -53,37 +49,33 @@ public class WaitingArea {
      */
 
     // Consume. Should be used by the consumers (waitress)
-    public synchronized Customer next() {
+    public synchronized Customer next() throws InterruptedException {
 
 
-        try {
-            // wait until there are customers in the waiting area
-            while (empty()) {
-                wait();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        // wait until there are customers in the waiting area
+        while (empty()) {
+            wait();
         }
-        Customer customer = waitingArea.poll();
-        String msg = "Thread {0}: customer \"{1}\" left the waiting area";
-        Object[] args = {Thread.currentThread().getName(), customer.getCustomerID()};
-        printNice(msg, args);
 
-        notify();
-        return customer;
+        Customer nextCustomer = waitingArea.poll();
+
+        // logging
+        String msg = Thread.currentThread().getName() + ": Customer " + nextCustomer.getCustomerID() + " is now fetched and ready for ordering food";
+        SushiBar.write(msg);
+
+        this.notifyAll();
+
+
+        return nextCustomer;
     }
 
-    private boolean full() {
+
+    public boolean full() {
         return waitingArea.size() >= areaSize;
     }
 
-    private boolean empty() {
+    public synchronized boolean empty() {
         return waitingArea.size() == 0;
-    }
-
-    private void printNice(String message, Object[] args) {
-        MessageFormat mf = new MessageFormat(message);
-        System.out.println(mf.format(args));
     }
 
 

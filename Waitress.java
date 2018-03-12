@@ -9,8 +9,12 @@ public class Waitress implements Runnable {
      *
      * @param waitingArea The waiting area for customers
      */
-    Waitress(WaitingArea waitingArea) {
-        // TODO Implement required functionality
+
+
+    private WaitingArea waitingArea;
+
+    public Waitress(WaitingArea waitingArea) {
+        this.waitingArea = waitingArea;
     }
 
     /**
@@ -19,7 +23,27 @@ public class Waitress implements Runnable {
      */
     @Override
     public void run() {
-        // TODO Implement required functionality
+        while (SushiBar.isOpen) {
+
+
+            Customer nextCustomer = null;
+            try {
+                nextCustomer = waitingArea.next();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                // wait an amount of time before taking an order
+                Thread.sleep(SushiBar.waitressWait);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            assert nextCustomer != null;
+            nextCustomer.orderAndEat();
+
+        }
+
+
     }
 
 
