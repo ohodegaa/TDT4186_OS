@@ -24,19 +24,26 @@ public class Waitress implements Runnable {
     @Override
     public void run() {
         while (SushiBar.isOpen) {
-            Customer nextCustomer = waitingArea.next();
-            // logging
-            String msg = Thread.currentThread().getName() + ": Customer " + nextCustomer.getCustomerID() + " is now fetched";
-            SushiBar.write(msg);
+
+
+            Customer nextCustomer = null;
+            try {
+                nextCustomer = waitingArea.next();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             try {
                 // wait an amount of time before taking an order
                 Thread.sleep(SushiBar.waitressWait);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            nextCustomer.order();
+            assert nextCustomer != null;
+            nextCustomer.orderAndEat();
 
         }
+
+
     }
 
 
