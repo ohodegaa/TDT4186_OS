@@ -22,23 +22,34 @@ public class Door implements Runnable {
      */
     @Override
     public void run() {
-        // TODO: add random production of customers
 
         while (SushiBar.isOpen) {
+
+
             Customer nextCustomer = new Customer();     // creates new customer
+            try {
+                waitingArea.enter(nextCustomer);            // new customer enters the waiting area
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             // logging
             String msg = Thread.currentThread().getName() + ": Customer " + nextCustomer.getCustomerID() + " is now created";
             SushiBar.write(msg);
-            waitingArea.enter(nextCustomer);            // new customer enters the waiting area
 
 
             try {
-                // wait an amount of time before creating a new customer
+                // time before new customer enters
                 Thread.sleep(SushiBar.doorWait);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+
         }
+
+        // sushi bar closed
+        SushiBar.write("***** NO MORE CUSTOMERS - THE SHOP IS NOW CLOSED. *****");
     }
 
 

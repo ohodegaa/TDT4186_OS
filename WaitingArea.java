@@ -28,22 +28,20 @@ public class WaitingArea {
      */
 
     // Produce. Should be used by the producer (door)
-    public synchronized void enter(Customer customer) {
-        try {
+    public synchronized void enter(Customer customer) throws InterruptedException {
+
+        while (full()) {
             // wait until there are room for another customer in the waiting area
-            while (full()) {
-                wait();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            this.wait();
         }
+
         waitingArea.add(customer);
 
-
-        String msg = Thread.currentThread().getName() + ": Customer " +customer.getCustomerID() + " is now entering";
+        // logging
+        String msg = Thread.currentThread().getName() + ": Customer " + customer.getCustomerID() + " is now waiting";
         SushiBar.write(msg);
 
-        notify();
+        notifyAll();
     }
 
     /**
@@ -51,34 +49,34 @@ public class WaitingArea {
      */
 
     // Consume. Should be used by the consumers (waitress)
-    public synchronized Customer next() {
+    public synchronized Customer next() throws InterruptedException {
 
 
-        try {
-            // wait until there are customers in the waiting area
-            while (empty()) {
-                wait();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        // wait until there are customers in the waiting area
+        while (empty()) {
+            wait();
         }
-        Customer customer = waitingArea.poll();
-        String msg = Thread.currentThread().getName() + ": Customer " +customer.getCustomerID() + " is now leaving";
+
+        Customer nextCustomer = waitingArea.poll();
+
+        // logging
+        String msg = Thread.currentThread().getName() + ": Customer " + nextCustomer.getCustomerID() + " is now fetched and ready for ordering food";
         SushiBar.write(msg);
 
+        this.notifyAll();
 
-        notify();
-        return customer;
+
+        return nextCustomer;
     }
 
-    private boolean full() {
+
+    public boolean full() {
         return waitingArea.size() >= areaSize;
     }
 
-    private boolean empty() {
+    public synchronized boolean empty() {
         return waitingArea.size() == 0;
     }
-
 
 
 }

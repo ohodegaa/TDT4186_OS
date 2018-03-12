@@ -36,10 +36,10 @@ public class Customer {
     /**
      * Here you should implement the functionality for ordering food as described in the assignment.
      */
-    public synchronized void order(){
+    public synchronized void orderAndEat(){
 
         // random number of orders
-        int numberOfOrders = random.nextInt();
+        int numberOfOrders = random.nextInt(SushiBar.maxOrder) + 1;
 
         // random number of total orders are eaten
         int eatenOrders = random.nextInt(numberOfOrders);
@@ -53,14 +53,19 @@ public class Customer {
         SushiBar.takeawayOrders.add(takeAwayOrders);
 
         // logging
-        String msg = Thread.currentThread().getName() + ": Customer " + this.getCustomerID() + " is now eating";
-        SushiBar.write(msg);
+        String msg1 = Thread.currentThread().getName() + ": Customer " + this.getCustomerID() + " is now eating";
+        SushiBar.write(msg1);
         try {
             // customer is eating
             Thread.sleep(SushiBar.customerWait);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        SushiBar.customerCounter.decrement();
+
+        // logging
+        String msg2 = Thread.currentThread().getName() + ": Customer " + this.getCustomerID() + " is now leaving";
+        SushiBar.write(msg2);
     }
 
     /**
